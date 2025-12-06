@@ -4,6 +4,7 @@ import { Trend } from 'k6/metrics';
 import { randomEmail } from './helpers/randomEmail.js';
 import { getBaseUrl } from './helpers/getBaseUrl.js';
 import { login } from './helpers/login.js';
+import faker from "k6/x/faker"
 
 export let options = {
     thresholds: {
@@ -22,14 +23,14 @@ export let options = {
 const checkoutTrend = new Trend('checkout_duration');
 
 export default function () {
-    let email, password = 'Test@1234', token;
+    let email, password, token;
     group('Register User', function () {
         email = randomEmail();
         const url = `${getBaseUrl()}/auth/register`;
         const payload = JSON.stringify({
             email: email,
-            password: password,
-            name: 'Test User'
+            password: faker.internet.password(),
+            name: faker.person.firstName()
         });
         const params = { headers: { 'Content-Type': 'application/json' } };
         const res = http.post(url, payload, params);
